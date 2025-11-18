@@ -55,7 +55,7 @@ async def short_url(longurl, attempt=0):
                 "GET",
                 f"https://{_shortener}/api?api={_shortener_api}&url={quote(longurl)}",
             ).json()
-            shorted = res["shortenedUrl"]
+            shorted = res["shortenedUrl"].replace("﻿", "")
             if not shorted:
                 shrtco_res = cget(
                     "GET", f"https://api.shrtco.de/v2/shorten?url={quote(longurl)}"
@@ -65,7 +65,7 @@ async def short_url(longurl, attempt=0):
                     "GET",
                     f"https://{_shortener}/api?api={_shortener_api}&url={shrtco_link}",
                 ).json()
-                shorted = res["shortenedUrl"]
+                shorted = res["shortenedUrl"].replace("﻿", "")
             if not shorted:
                 shorted = longurl
             return shorted
