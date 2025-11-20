@@ -2,7 +2,6 @@ from base64 import b64encode
 from random import choice, random
 from asyncio import sleep as asleep
 from urllib.parse import quote
-import json
 
 from cloudscraper import create_scraper
 from urllib3 import disable_warnings
@@ -54,11 +53,9 @@ async def short_url(longurl, attempt=0):
         else:
             res = cget(
                 "GET",
-                f"https://{_shortener}/api?api={_shortener_api}&url={quote(longurl)}",
+                f"https://{_shortener}/api?api={_shortener_api}&url={quote(longurl)}&format=text",
             )
-            res_text = res.text.lstrip('﻿')
-            res = json.loads(res_text)
-            shorted = res["shortenedUrl"]
+            shorted = res.text.lstrip('﻿')
             if not shorted:
                 shrtco_res = cget(
                     "GET", f"https://api.shrtco.de/v2/shorten?url={quote(longurl)}"
@@ -66,11 +63,9 @@ async def short_url(longurl, attempt=0):
                 shrtco_link = shrtco_res["result"]["full_short_link"]
                 res = cget(
                     "GET",
-                    f"https://{_shortener}/api?api={_shortener_api}&url={shrtco_link}",
+                    f"https://{_shortener}/api?api={_shortener_api}&url={shrtco_link}&format=text",
                 )
-                res_text = res.text.lstrip('﻿')
-                res = json.loads(res_text)
-                shorted = res["shortenedUrl"]
+                shorted = res.text.lstrip('﻿')
             if not shorted:
                 shorted = longurl
             return shorted
